@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 
 const TABLE_NAME = "regex_scores";
 
+export const runtime = "edge";
+
 function getSupabaseAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

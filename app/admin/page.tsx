@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const runtime = "edge";
+
 async function signOutAction() {
   "use server";
 
