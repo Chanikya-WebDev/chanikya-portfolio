@@ -296,7 +296,7 @@ export function RegexGame() {
 
       {/* HUD - Game stats */}
       {gameState !== "start" && (
-        <div className="border-b border-slate-800 bg-slate-900/30 px-4 py-4 sm:px-6">
+        <div className="hidden sm:block border-b border-slate-800 bg-slate-900/30 px-4 py-4 sm:px-6">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-amber-400" />
@@ -428,7 +428,7 @@ export function RegexGame() {
                 <div className={cn(textVariants({ role: "metadata" }), "text-red-400")}>Syntax Error</div>
               ) : null}
 
-              <div className="flex items-center justify-between gap-4">
+              <div className="hidden sm:flex items-center justify-between gap-4">
                 <button
                   onClick={handleFire}
                   className={cn(textVariants({ role: "label" }), "rounded-md bg-cyan-600 px-4 py-2 text-white transition hover:bg-cyan-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900")}
