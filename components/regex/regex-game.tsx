@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Terminal, ShieldAlert, Zap, Play, RotateCcw, BookOpen } from "lucide-react";
+import { textVariants } from "@/components/ui/typography";
+import { cn } from "@/lib/utils";
 
 type GameState = "start" | "playing" | "gameover";
 
@@ -41,11 +43,12 @@ const DICTIONARY = [
 ];
 
 const BANNED_PATTERNS = [".*", ".+"];
-const SPAWN_INTERVAL = 2000;
+const SPAWN_INTERVAL = 3000;
 const PHYSICS_INTERVAL = 50;
 const MAX_LIVES = 3;
 const BREACH_Y = 95;
-const FALL_SPEED = 0.34;
+const FALL_SPEED = 0.18;
+const MAX_ACTIVE_TARGETS = 6;
 const PERSONAL_BEST_KEY = "regex-invaders-personal-best";
 
 export function RegexGame() {
@@ -106,13 +109,16 @@ export function RegexGame() {
     if (gameState !== "playing") return;
 
     const spawner = setInterval(() => {
-      const newTarget: Target = {
-        id: targetIdRef.current++,
-        text: DICTIONARY[Math.floor(Math.random() * DICTIONARY.length)],
-        x: 10 + Math.random() * 80,
-        y: -5,
-      };
-      setTargets((prev) => [...prev, newTarget]);
+      setTargets((prev) => {
+        if (prev.length >= MAX_ACTIVE_TARGETS) return prev;
+        const newTarget: Target = {
+          id: targetIdRef.current++,
+          text: DICTIONARY[Math.floor(Math.random() * DICTIONARY.length)],
+          x: 10 + Math.random() * 80,
+          y: -5,
+        };
+        return [...prev, newTarget];
+      });
     }, SPAWN_INTERVAL);
 
     return () => clearInterval(spawner);
@@ -264,22 +270,22 @@ export function RegexGame() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] w-full flex-col bg-slate-950 font-mono text-zinc-100">
+    <div className="flex min-h-[calc(100vh-4rem)] w-full flex-col bg-slate-950 text-zinc-100">
       {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-950/95 px-6 py-4 backdrop-blur">
+      <div className="border-b border-slate-800 bg-slate-950/95 px-4 py-4 backdrop-blur sm:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Terminal className="h-5 w-5 text-cyan-400" />
             <div>
-              <h1 className="text-lg font-bold tracking-widest text-cyan-400">
+              <p className={cn(textVariants({ role: "label" }), "font-mono tracking-widest text-cyan-400")}>
                 REGEX INVADERS
-              </h1>
-              <p className="text-xs text-slate-400">Defend against falling strings</p>
+              </p>
+              <p className={cn(textVariants({ role: "metadata" }), "text-slate-400")}>Defend against falling strings</p>
             </div>
           </div>
           <button
             onClick={() => setShowRules(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-300 transition hover:bg-slate-800"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-300 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             title="View game rules"
             aria-label="View game rules"
           >
@@ -290,11 +296,11 @@ export function RegexGame() {
 
       {/* HUD - Game stats */}
       {gameState !== "start" && (
-        <div className="border-b border-slate-800 bg-slate-900/30 px-6 py-3">
-          <div className="flex flex-wrap items-center gap-6">
+        <div className="border-b border-slate-800 bg-slate-900/30 px-4 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-amber-400" />
-              <span className="text-sm font-bold text-zinc-100">{score}</span>
+              <span className={cn(textVariants({ role: "label" }), "text-zinc-100")}>{score}</span>
             </div>
             <div className="flex items-center gap-2">
               {Array.from({ length: MAX_LIVES }).map((_, i) => (
@@ -306,8 +312,8 @@ export function RegexGame() {
                 />
               ))}
             </div>
-            <div className="text-sm font-semibold text-slate-300">Personal Best: {personalBest}</div>
-            <div className="text-sm font-semibold text-slate-300">
+            <div className={cn(textVariants({ role: "label" }), "text-slate-300")}>Personal Best: {personalBest}</div>
+            <div className={cn(textVariants({ role: "label" }), "text-slate-300")}>
               Global Best: {globalEnabled ? (globalBest ?? 0) : "Unavailable"}
             </div>
           </div>
@@ -316,18 +322,18 @@ export function RegexGame() {
 
       {/* Game Container */}
       {gameState === "start" && (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="text-center">
-            <h1 className="mb-4 text-4xl font-bold text-cyan-400">
+        <div className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
+          <div className="max-w-xl text-center">
+            <h1 className={cn(textVariants({ role: "hero-title" }), "mb-4 text-cyan-400")}>
               REGEX INVADERS
             </h1>
-            <p className="mb-6 max-w-md text-base text-zinc-300">
+            <p className={cn(textVariants({ role: "body" }), "mb-6 text-zinc-300")}>
               Type regex patterns to destroy falling strings. Match the entire
               string with precision. Defend against breaches!
             </p>
             <button
               onClick={startGame}
-              className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition hover:bg-cyan-500 active:scale-95"
+              className={cn(textVariants({ role: "label" }), "inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-4 text-white transition hover:bg-cyan-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950")}
             >
               <Play className="h-4 w-4" />
               Start Game
@@ -341,7 +347,7 @@ export function RegexGame() {
           {/* Game Arena */}
           <div className="relative flex-1 overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900">
             {/* Grid background */}
-            <div className="pointer-events-none absolute inset-0 opacity-10">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.07]">
               <div
                 className="h-full w-full"
                 style={{
@@ -358,7 +364,7 @@ export function RegexGame() {
                 key={target.id}
                 className={`absolute transition-all ${
                   highlightedIds.has(target.id)
-                    ? "scale-110 text-red-400"
+                    ? "scale-105 text-red-400"
                     : "text-zinc-300"
                 }`}
                 style={{
@@ -368,11 +374,14 @@ export function RegexGame() {
                 }}
               >
                 <div
-                  className={`whitespace-nowrap rounded border px-3 py-1 text-sm font-mono font-semibold ${
+                  className={cn(
+                    textVariants({ role: "label" }),
+                    `whitespace-nowrap rounded border px-4 py-2 font-mono ${
                     highlightedIds.has(target.id)
                       ? "border-red-500/50 bg-red-950/40 shadow-lg shadow-red-500/20"
                       : "border-slate-700 bg-slate-900/50 shadow-sm"
-                  }`}
+                    }`,
+                  )}
                 >
                   {target.text}
                 </div>
@@ -384,11 +393,11 @@ export function RegexGame() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-slate-800 bg-slate-900/95 px-6 py-4">
-            <div className="mx-auto max-w-2xl space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm text-slate-500">/</span>
-                <span className="font-mono text-sm text-slate-500">^</span>
+          <div className="border-t border-slate-800 bg-slate-900/95 px-4 py-4 sm:px-6">
+            <div className="mx-auto max-w-2xl space-y-4">
+              <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+                <span className={cn(textVariants({ role: "label" }), "font-mono text-slate-500")}>/</span>
+                <span className={cn(textVariants({ role: "label" }), "font-mono text-slate-500")}>^</span>
                 <input
                   type="text"
                   value={input}
@@ -399,29 +408,34 @@ export function RegexGame() {
                     }
                   }}
                   placeholder="Type regex pattern..."
-                  className="flex-1 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 font-mono text-sm text-zinc-100 placeholder-slate-500 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30"
+                  className={cn(
+                    textVariants({ role: "body" }),
+                    "min-w-0 flex-1 rounded-md border border-slate-700 bg-slate-800 px-4 py-2 font-mono text-zinc-100 placeholder-slate-500 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30",
+                  )}
                   autoFocus
                 />
-                <span className="font-mono text-sm text-slate-500">$</span>
-                <span className="font-mono text-sm text-slate-500">/</span>
+                <span className={cn(textVariants({ role: "label" }), "font-mono text-slate-500")}>$</span>
+                <span className={cn(textVariants({ role: "label" }), "font-mono text-slate-500")}>/</span>
               </div>
 
               {error ? (
-                <div className="text-xs font-bold text-red-400">
+                <div className={cn(textVariants({ role: "metadata" }), "text-red-400")}>
                   {error}
                 </div>
               ) : null}
 
-              {syntaxError ? <div className="text-xs font-bold text-red-400">Syntax Error</div> : null}
+              {syntaxError ? (
+                <div className={cn(textVariants({ role: "metadata" }), "text-red-400")}>Syntax Error</div>
+              ) : null}
 
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-4">
                 <button
                   onClick={handleFire}
-                  className="rounded-md bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 active:scale-95"
+                  className={cn(textVariants({ role: "label" }), "rounded-md bg-cyan-600 px-4 py-2 text-white transition hover:bg-cyan-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900")}
                 >
                   Fire
                 </button>
-                <div className="text-sm text-slate-400">
+                <div className={cn(textVariants({ role: "label" }), "text-slate-400")}>
                   {highlightedIds.size > 0
                     ? `${highlightedIds.size} target${
                         highlightedIds.size > 1 ? "s" : ""
@@ -435,14 +449,14 @@ export function RegexGame() {
       )}
 
       {gameState === "gameover" && (
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
           <div className="text-center">
-            <h1 className="mb-4 text-4xl font-bold text-red-400">GAME OVER</h1>
-            <p className="mb-2 text-lg text-zinc-300">Final Score</p>
-            <p className="mb-8 text-5xl font-bold text-amber-400">{score}</p>
+            <h2 className={cn(textVariants({ role: "section-title" }), "mb-4 text-red-400")}>GAME OVER</h2>
+            <p className={cn(textVariants({ role: "body" }), "mb-2 text-zinc-300")}>Final Score</p>
+            <p className={cn(textVariants({ role: "hero-title" }), "mb-8 text-amber-400")}>{score}</p>
             <button
               onClick={resetGame}
-              className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-3 font-semibold text-white transition hover:bg-cyan-500 active:scale-95"
+              className={cn(textVariants({ role: "label" }), "inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-6 py-4 text-white transition hover:bg-cyan-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950")}
             >
               <RotateCcw className="h-4 w-4" />
               Try Again
@@ -459,49 +473,49 @@ export function RegexGame() {
           role="presentation"
         >
           <section
-            className="w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 p-6 text-zinc-100 shadow-2xl"
+            className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 p-6 text-zinc-100 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-label="Game rules"
           >
-            <h2 className="mb-4 text-2xl font-bold text-cyan-400">How to Play</h2>
+            <h2 className={cn(textVariants({ role: "section-title" }), "mb-4 text-cyan-400")}>How to Play</h2>
             
-            <div className="space-y-4 text-sm">
+            <div className={cn(textVariants({ role: "body" }), "space-y-4")}>
               <div>
-                <h3 className="mb-1 font-semibold text-zinc-200">📍 Objective</h3>
+                <h3 className={cn(textVariants({ role: "label" }), "mb-2 text-zinc-200")}>📍 Objective</h3>
                 <p className="text-slate-300">Type regex patterns to destroy falling strings before they reach the bottom.</p>
               </div>
 
               <div>
-                <h3 className="mb-1 font-semibold text-zinc-200">📋 Example Regex Patterns</h3>
-                <ul className="space-y-1 font-mono text-sm text-slate-300">
-                  <li><code className="rounded bg-slate-800 px-2 py-1">\d+\.\d+\.\d+\.\d+</code> - Matches IP addresses</li>
-                  <li><code className="rounded bg-slate-800 px-2 py-1">.*@gmail\.com</code> - Matches Gmail addresses</li>
-                  <li><code className="rounded bg-slate-800 px-2 py-1">#[0-9a-f]{'{'}{6}{'}'}</code> - Matches hex colors</li>
-                  <li><code className="rounded bg-slate-800 px-2 py-1">&lt;.*&gt;</code> - Matches HTML tags</li>
+                <h3 className={cn(textVariants({ role: "label" }), "mb-2 text-zinc-200")}>📋 Example Regex Patterns</h3>
+                <ul className={cn(textVariants({ role: "body" }), "space-y-2 font-mono text-slate-300")}>
+                  <li><code className="rounded bg-slate-800 px-2 py-2">\d+\.\d+\.\d+\.\d+</code> - Matches IP addresses</li>
+                  <li><code className="rounded bg-slate-800 px-2 py-2">.*@gmail\.com</code> - Matches Gmail addresses</li>
+                  <li><code className="rounded bg-slate-800 px-2 py-2">#[0-9a-f]{'{'}{6}{'}'}</code> - Matches hex colors</li>
+                  <li><code className="rounded bg-slate-800 px-2 py-2">&lt;.*&gt;</code> - Matches HTML tags</li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="mb-1 font-semibold text-zinc-200">⚠️ Banned Patterns</h3>
-                <p className="text-slate-300">Patterns like <code className="rounded bg-red-950 px-1">.*</code> and <code className="rounded bg-red-950 px-1">.+</code> are blocked. Be precise.</p>
+                <h3 className={cn(textVariants({ role: "label" }), "mb-2 text-zinc-200")}>⚠️ Banned Patterns</h3>
+                <p className="text-slate-300">Patterns like <code className="rounded bg-red-950 px-2 py-2">.*</code> and <code className="rounded bg-red-950 px-2 py-2">.+</code> are blocked. Be precise.</p>
               </div>
 
               <div>
-                <h3 className="mb-1 font-semibold text-zinc-200">🎯 Scoring</h3>
+                <h3 className={cn(textVariants({ role: "label" }), "mb-2 text-zinc-200")}>🎯 Scoring</h3>
                 <p className="text-slate-300">Destroy 1 target = 100 points. Multi-kills get a 1.25x bonus per extra target.</p>
               </div>
 
               <div>
-                <h3 className="mb-1 font-semibold text-zinc-200">❤️ Lives</h3>
+                <h3 className={cn(textVariants({ role: "label" }), "mb-2 text-zinc-200")}>❤️ Lives</h3>
                 <p className="text-slate-300">You start with 3 lives. Lose all to trigger Game Over.</p>
               </div>
             </div>
 
             <button
               onClick={() => setShowRules(false)}
-              className="mt-6 w-full rounded-lg bg-zinc-100 px-4 py-2 font-semibold text-zinc-900 transition hover:bg-zinc-300"
+              className={cn(textVariants({ role: "label" }), "mt-6 w-full rounded-lg bg-zinc-100 px-4 py-2 text-zinc-900 transition hover:bg-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900")}
             >
               Close
             </button>
@@ -511,4 +525,3 @@ export function RegexGame() {
     </div>
   );
 }
-

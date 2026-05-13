@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   
+  
   /* Image optimization */
   images: {
     formats: ["image/avif", "image/webp"],
@@ -52,6 +53,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+};
+module.exports = {
+  allowedDevOrigins: ['192.168.19.230'],
 };
 
 export default nextConfig;

@@ -2,7 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { textVariants } from "@/components/ui/typography";
 import { createClient } from "@/utils/supabase/client";
+import { cn } from "@/lib/utils";
 
 type Status = {
   error: string | null;
@@ -37,8 +39,8 @@ export function LoginForm() {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-      <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium text-zinc-100">
+      <div className="space-y-2">
+        <label htmlFor="email" className={cn(textVariants({ role: "label" }), "text-zinc-100")}>
           Email
         </label>
         <input
@@ -47,13 +49,13 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm text-zinc-100 outline-none ring-0 transition focus:border-sky-500"
+          className={cn(textVariants({ role: "body" }), "w-full rounded-md border border-zinc-700 bg-transparent px-4 py-2 text-zinc-100 outline-none ring-0 transition focus:border-sky-500")}
           placeholder="you@example.com"
         />
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="password" className="text-sm font-medium text-zinc-100">
+      <div className="space-y-2">
+        <label htmlFor="password" className={cn(textVariants({ role: "label" }), "text-zinc-100")}>
           Password
         </label>
         <input
@@ -62,13 +64,13 @@ export function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm text-zinc-100 outline-none ring-0 transition focus:border-sky-500"
+          className={cn(textVariants({ role: "body" }), "w-full rounded-md border border-zinc-700 bg-transparent px-4 py-2 text-zinc-100 outline-none ring-0 transition focus:border-sky-500")}
           placeholder="Your password"
         />
       </div>
 
       {status.error ? (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300" role="alert">
+        <p className={cn(textVariants({ role: "label" }), "rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2 text-red-300")} role="alert">
           {status.error}
         </p>
       ) : null}
@@ -76,7 +78,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={status.loading}
-        className="inline-flex w-full items-center justify-center rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(textVariants({ role: "label" }), "inline-flex w-full items-center justify-center rounded-md bg-zinc-100 px-4 py-2 text-zinc-900 transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50")}
       >
         {status.loading ? "Signing in..." : "Sign in"}
       </button>

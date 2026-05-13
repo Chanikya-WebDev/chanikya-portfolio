@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { textVariants } from "@/components/ui/typography";
+import { cn } from "@/lib/utils";
 
 type ContactState = {
   isLoading: boolean;
@@ -49,40 +51,55 @@ export function ContactForm({ id }: ContactFormProps) {
   }
 
   return (
-    <section id={id} className="scroll-mt-24 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-5 shadow-none">
-      <h2 className="text-2xl font-semibold text-zinc-50">Contact</h2>
-      <p className="mt-2 text-sm text-zinc-300">
+    <section id={id} className="scroll-mt-24 rounded-2xl border border-zinc-800/80 bg-zinc-950/72 p-4 sm:p-6 md:p-8 shadow-none">
+      <h2 className={cn(textVariants({ role: "section-title" }), "text-zinc-50 text-lg sm:text-2xl")}>Contact</h2>
+      <p id="contact-description" className={cn(textVariants({ role: "body" }), "mt-2 max-w-2xl text-zinc-300 text-sm sm:text-base")}>
         Have an internship, collaboration, or project idea? Send a message.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="space-y-1 sm:col-span-1">
-          <span className="text-sm font-medium text-zinc-100">Name</span>
+      <form onSubmit={onSubmit} aria-busy={state.isLoading} aria-describedby="contact-description" className="mt-4 sm:mt-6 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
+        <label htmlFor="contact-name" className="space-y-1.5 sm:space-y-2 sm:col-span-1">
+          <span className={cn(textVariants({ role: "label" }), "text-zinc-100 text-xs sm:text-sm")}>Name</span>
           <input
+            id="contact-name"
             type="text"
             name="name"
+            autoComplete="name"
             required
-            className="w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15"
+            className={cn(
+              textVariants({ role: "body" }),
+              "w-full rounded-md border border-zinc-700 bg-zinc-950/35 px-3 sm:px-4 py-2 sm:py-3 text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15 text-sm sm:text-base",
+            )}
           />
         </label>
 
-        <label className="space-y-1 sm:col-span-1">
-          <span className="text-sm font-medium text-zinc-100">Email</span>
+        <label htmlFor="contact-email" className="space-y-1.5 sm:space-y-2 sm:col-span-1">
+          <span className={cn(textVariants({ role: "label" }), "text-zinc-100 text-xs sm:text-sm")}>Email</span>
           <input
+            id="contact-email"
             type="email"
             name="email"
+            autoComplete="email"
             required
-            className="w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15"
+            className={cn(
+              textVariants({ role: "body" }),
+              "w-full rounded-md border border-zinc-700 bg-zinc-950/35 px-3 sm:px-4 py-2 sm:py-3 text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15 text-sm sm:text-base",
+            )}
           />
         </label>
 
-        <label className="space-y-1 sm:col-span-2">
-          <span className="text-sm font-medium text-zinc-100">Message</span>
+        <label htmlFor="contact-message" className="space-y-1.5 sm:space-y-2 sm:col-span-2">
+          <span className={cn(textVariants({ role: "label" }), "text-zinc-100 text-xs sm:text-sm")}>Message</span>
           <textarea
+            id="contact-message"
             name="message"
             required
-            rows={5}
-            className="w-full rounded-md border border-zinc-700 bg-transparent px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15"
+            rows={4}
+            autoComplete="off"
+            className={cn(
+              textVariants({ role: "body" }),
+              "min-h-28 sm:min-h-36 w-full rounded-md border border-zinc-700 bg-zinc-950/35 px-3 sm:px-4 py-2 sm:py-3 text-zinc-100 placeholder:text-zinc-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/15 text-sm sm:text-base",
+            )}
           />
         </label>
 
@@ -90,7 +107,7 @@ export function ContactForm({ id }: ContactFormProps) {
           <button
             type="submit"
             disabled={state.isLoading}
-            className="rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className={cn(textVariants({ role: "label" }), "w-full sm:w-auto rounded-md bg-zinc-100 px-4 py-2 text-zinc-900 transition hover:bg-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 disabled:cursor-not-allowed disabled:opacity-60 text-sm sm:text-base")}
           >
             {state.isLoading ? "Sending..." : "Send Message"}
           </button>
@@ -101,11 +118,14 @@ export function ContactForm({ id }: ContactFormProps) {
         <div
           role="status"
           aria-live="polite"
-          className={`fixed bottom-4 right-4 rounded-md px-4 py-3 text-sm shadow-lg ${
-            state.toast.type === "success"
-              ? "bg-emerald-500 text-white"
-              : "bg-red-500 text-white"
-          }`}
+          className={cn(
+            textVariants({ role: "label" }),
+            `fixed inset-x-3 bottom-4 z-50 rounded-md px-3 sm:px-4 py-3 sm:py-4 shadow-lg text-xs sm:text-sm sm:inset-x-auto sm:right-4 sm:w-auto ${
+              state.toast.type === "success"
+                ? "bg-emerald-500 text-white"
+                : "bg-red-500 text-white"
+            }`,
+          )}
         >
           {state.toast.message}
         </div>

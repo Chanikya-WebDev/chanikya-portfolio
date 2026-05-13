@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SiteNavbar } from "@/components/navigation/site-navbar";
-import { RegexGame } from "@/components/regex/regex-game";
+import { DeferredRegexGame } from "@/components/regex/deferred-regex-game";
 import { RegexGameJsonLd } from "@/components/seo/regex-game-json-ld";
 import { siteConfig } from "@/lib/site-config";
 
@@ -30,7 +30,7 @@ export default function RegexPage() {
     <>
       <SiteNavbar />
       <main className="pt-16">
-        <RegexGame />
+        <DeferredRegexGame />
       </main>
       <RegexGameJsonLd />
     </>
